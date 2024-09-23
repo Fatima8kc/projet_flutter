@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'provider/film_provider.dart';
 import 'provider/commentaire_provider.dart';
 import 'screens/accueil.dart';
- // Importez le fichier contenant DBHelper
+
 
 void main()  {
  

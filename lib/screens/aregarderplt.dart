@@ -67,7 +67,7 @@ class WatchLaterScreen extends StatelessWidget {
                                       ),
                                       TextButton(
                                         onPressed: () {
-                                          filmProvider.removeAregarderPlusTard(film);
+                                          filmProvider.supprimerRegarderPlustard(film);
                                           Navigator.of(context).pop();
                                           ScaffoldMessenger.of(context).showSnackBar(
                                             SnackBar(content: Text('${film.titre} a été supprimé des "À Voir Plus Tard"')),

@@ -39,7 +39,7 @@ class FavoritesScreen extends StatelessWidget {
                                   child: Image.network(
                                     'https://image.tmdb.org/t/p/w500/${film.cheminAffiche}',
                                     width: 80,
-                                    height: 200,
+                                    height: 120,
                                     fit: BoxFit.cover,
                                   ),
                                 )
@@ -67,7 +67,7 @@ class FavoritesScreen extends StatelessWidget {
                                       ),
                                       TextButton(
                                         onPressed: () {
-                                          filmProvider.removeDeFavoris(film); // Supprime le film des favoris
+                                          filmProvider.supprimerFavorit(film); // Supprime le film des favoris
                                           Navigator.of(context).pop();
                                           ScaffoldMessenger.of(context).showSnackBar(
                                             SnackBar(content: Text('${film.titre} a été supprimé des favoris')),

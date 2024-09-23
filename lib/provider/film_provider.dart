@@ -170,18 +170,22 @@ Future<void> saveFavorites() async {
     await prefs.setStringList('favorites', favoritesJson);
   }
 
-  Future<void> loadFavorites() async {
-  print('Chargement des favoris...');
-  try {
-    await Future.delayed(Duration(seconds: 1)); // Simuler un délai
-    print('Favoris chargés');
-    // Ajoutez ici le code pour charger les favoris
-    notifyListeners();
-  } catch (e) {
-    print('Erreur de chargement: $e');
-    throw e;
+    Future<void> loadFavorites() async {
+    print('Chargement des favoris...');
+    try {
+      await Future.delayed(Duration(seconds: 1));
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      List<String>? favoritesJson = prefs.getStringList('favorites');
+      if (favoritesJson != null) {
+        _favorites = favoritesJson.map((jsonStr) => Film.aPartirDeJson(jsonDecode(jsonStr))).toList();
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Erreur de chargement: $e');
+      throw e;
+    }
   }
-}
+
 
   Future<void> saveWatchLater() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -226,15 +230,9 @@ Future<void> supprimerRegarderPlustard(Film film) async {
 
   void addAfavoris(Film film) {
     _favorites.add(film);
-    saveFavorites();// Sauvegarder les favoris après l'ajout
+      saveFavorites();// Sauvegarder les favoris après l'ajout
     notifyListeners();
   
-  }
-
-  void removeDeFavoris(Film film) {
-    _favorites.remove(film);
-     // Sauvegarder après suppression
-    notifyListeners();
   }
 
   void addAregarderPlustard(Film film) {
@@ -243,10 +241,7 @@ Future<void> supprimerRegarderPlustard(Film film) async {
     notifyListeners();
   }
 
-  void removeAregarderPlusTard(Film film) {
-    _watchLater.remove(film);
-    notifyListeners();
-  }
+
 
   Future<void> initFavoritesAndWatchLater() async {
     await loadFavorites();
