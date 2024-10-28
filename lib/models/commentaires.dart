@@ -1,16 +1,19 @@
 class Commentaire {
-  final String author;
-  final String content;
+  final String auteur;
+  final String contenu;
 
-  Commentaire({
-    required this.author,
-    required this.content,
-  });
+  Commentaire({required this.auteur, required this.contenu});
+  Map<String, dynamic> toJson() {
+    return {
+      'auteur': auteur,
+      'contenu': contenu,
+    };
+  }
 
   factory Commentaire.fromJson(Map<String, dynamic> json) {
     return Commentaire(
-      author: json['author'] ?? 'Anonyme',
-      content: json['content'] ?? 'Pas de contenu',
+      auteur: json['auteur'] ??"anonyme",
+      contenu: json['contenu'] ??"aucun commentaire",
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../provider/film_provider.dart'; // Assurez-vous que le chemin est correct
+import '../provider/film_provider.dart'; 
 import '../screens/detail_film.dart';
 
 class WatchLaterScreen extends StatelessWidget {

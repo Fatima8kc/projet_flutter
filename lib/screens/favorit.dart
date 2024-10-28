@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../provider/film_provider.dart'; // Assurez-vous que le chemin est correct
+import '../provider/film_provider.dart'; 
 import '../screens/detail_film.dart';
 
 class FavoritesScreen extends StatelessWidget {
@@ -10,11 +10,11 @@ class FavoritesScreen extends StatelessWidget {
       future: Provider.of<FilmProvider>(context, listen: false).loadFavorites(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator()); // Affiche un indicateur de chargement
+          return Center(child: CircularProgressIndicator()); 
         } else if (snapshot.hasError) {
-          return Center(child: Text('Erreur: ${snapshot.error}')); // Affiche une erreur si le chargement échoue
+          return Center(child: Text('Erreur: ${snapshot.error}')); 
         } else {
-          final filmProvider = Provider.of<FilmProvider>(context); // Récupère les favoris après le chargement
+          final filmProvider = Provider.of<FilmProvider>(context); 
           return Scaffold(
             appBar: AppBar(
               title: Text('Favoris'),
@@ -22,9 +22,9 @@ class FavoritesScreen extends StatelessWidget {
             body: filmProvider.favorites.isEmpty
                 ? Center(child: Text('Aucun film favori', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
                 : ListView.builder(
-                    itemCount: filmProvider.favorites.length, // Compte les films favoris
+                    itemCount: filmProvider.favorites.length,
                     itemBuilder: (context, index) {
-                      final film = filmProvider.favorites[index]; // Accède à chaque film favori
+                      final film = filmProvider.favorites[index];
                       return Card(
                         margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                         elevation: 4,
@@ -62,12 +62,12 @@ class FavoritesScreen extends StatelessWidget {
                                       TextButton(
                                         child: Text('Annuler'),
                                         onPressed: () {
-                                          Navigator.of(context).pop(); // Ferme la boîte de dialogue sans supprimer
+                                          Navigator.of(context).pop(); 
                                         },
                                       ),
                                       TextButton(
                                         onPressed: () {
-                                          filmProvider.supprimerFavorit(film); // Supprime le film des favoris
+                                          filmProvider.supprimerFavorit(film); 
                                           Navigator.of(context).pop();
                                           ScaffoldMessenger.of(context).showSnackBar(
                                             SnackBar(content: Text('${film.titre} a été supprimé des favoris')),
@@ -82,7 +82,7 @@ class FavoritesScreen extends StatelessWidget {
                             },
                           ),
                           onTap: () {
-                            // Navigation vers l'écran des détails du film
+                         
                             Navigator.push(
                               context,
                               MaterialPageRoute(

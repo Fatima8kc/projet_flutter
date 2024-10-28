@@ -65,81 +65,75 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final filmProvider = Provider.of<FilmProvider>(context);
+Widget build(BuildContext context) {
+  final filmProvider = Provider.of<FilmProvider>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.film.titre),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.save),
-            onPressed: () async {
-              await filmProvider.chargerFilmsTelecharge();
-              List<Film> films = [...filmProvider.downloadedFilms, widget.film];
-              await filmProvider.enregistrerFilmsTelecharges(films);
+  return Scaffold(
+    appBar: AppBar(
+      title: Text(widget.film.titre),
+      actions: [
+        IconButton(
+          icon: Icon(Icons.save),
+          onPressed: () async {
+            await filmProvider.chargerFilmsTelecharge();
+            List<Film> films = [...filmProvider.downloadedFilms, widget.film];
+            await filmProvider.enregistrerFilmsTelecharges(films);
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Film téléchargé pour consultation hors ligne")),
-              );
-            },
-          )
-        ],
-      ),
-      body: filmProvider.selectedFilm == null
-          ? Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (widget.film.cheminAffiche != null)
-                      CachedNetworkImage(
-                        imageUrl: 'https://image.tmdb.org/t/p/w500/${widget.film.cheminAffiche!}',
-                        placeholder: (context, url) => CircularProgressIndicator(),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
-                      ),
-                    SizedBox(height: 15),
-                    Text(widget.film.titre, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 10),
-                    Text(widget.film.description ?? "Pas de synopsis disponible",
-                        style: TextStyle(fontSize: 16, color: Colors.grey[700])),
-                    SizedBox(height: 20),
-                    Text("Date de sortie: ${widget.film.dateDeSortie ?? 'Non disponible'}",
-                        style: TextStyle(fontSize: 16)),
-                    SizedBox(height: 10),
-                    Text("Évaluation: ${widget.film.noteMoyenne?.toString() ?? 'Non disponible'}/10",
-                        style: TextStyle(fontSize: 16)),
-                    SizedBox(height: 20),
-                    _buildCastSection(filmProvider),
-                    SizedBox(height: 20),
-                    _buildDirectorsSection(filmProvider),
-                    SizedBox(height: 20),
-                    ValueListenableBuilder<String?>(
-                      valueListenable: _trailerKeyNotifier,
-                      builder: (context, trailerKey, child) {
-                        if (trailerKey == null || trailerKey.isEmpty) {
-                          return Text('Pas de bande-annonce disponible',
-                              style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic));
-                        }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Film téléchargé pour consultation hors ligne")),
+            );
+          },
+        ),
+      ],
+    ),
+    body: filmProvider.selectedFilm == null
+        ? Center(child: CircularProgressIndicator())
+        : Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (widget.film.cheminAffiche != null)
+                    CachedNetworkImage(
+                      imageUrl: 'https://image.tmdb.org/t/p/w500/${widget.film.cheminAffiche!}',
+                      placeholder: (context, url) => CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                    ),
+                  SizedBox(height: 15),
+                  Text(widget.film.titre, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 10),
+                  Text(widget.film.description ?? "Pas de synopsis disponible",
+                      style: TextStyle(fontSize: 16, color: Colors.grey[700])),
+                  SizedBox(height: 20),
+                  Text("Date de sortie: ${widget.film.dateDeSortie ?? 'Non disponible'}",
+                      style: TextStyle(fontSize: 16)),
+                  SizedBox(height: 10),
+                  Text("Évaluation: ${widget.film.noteMoyenne?.toString() ?? 'Non disponible'}/10",
+                      style: TextStyle(fontSize: 16)),
+                  SizedBox(height: 20),
 
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Bandes-annonces:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                            SizedBox(height: 10),
-                            YoutubePlayer(
-                              controller: _youtubePlayerController,
-                              showVideoProgressIndicator: true,
-                              onReady: () {
-                                print('Player is ready.');
-                              },
-                            ),
-                            SizedBox(height: 10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  // Casting et Réalisateurs
+                  _buildCastSection(filmProvider),
+                  SizedBox(height: 20),
+                  _buildDirectorsSection(filmProvider),
+                  SizedBox(height: 20),
+                  ValueListenableBuilder<String?>(
+                    valueListenable: _trailerKeyNotifier,
+                    builder: (context, trailerKey, child) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (trailerKey != null && trailerKey.isNotEmpty)
+                            Column(
                               children: [
+                                Text("Bande-annonce", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                SizedBox(height: 10),
+                                YoutubePlayer(
+                                  controller: _youtubePlayerController,
+                                  showVideoProgressIndicator: true,
+                                ),
+                                SizedBox(height: 10),
                                 ElevatedButton.icon(
                                   onPressed: () {
                                     _youtubePlayerController.play();
@@ -151,74 +145,77 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                     foregroundColor: Colors.white,
                                   ),
                                 ),
-                                ElevatedButton.icon(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ReviewsScreen(filmId: widget.film.id),
-                                      ),
-                                    );
-                                  },
-                                  icon: Icon(Icons.rate_review),
-                                  label: Text('Voir Critiques'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blueAccent,
-                                    foregroundColor: Colors.white,
-                                  ),
-                                ),
                               ],
                             ),
-                          ],
-                        );
-                      },
-                    ),
-                    SizedBox(height: 30),
-                  Row(
-  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  children: [
-    Expanded(
-      child: ElevatedButton.icon(
-        onPressed: () {
-          filmProvider.addAfavoris(widget.film);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Ajouté aux favoris!')),
-          );
-        },
-        icon: Icon(Icons.favorite, size: 20),
-        label: Text('Favoris', style: TextStyle(fontSize: 14)),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.pink,
-          foregroundColor: Colors.white,
-        ),
-      ),
-    ),
-    SizedBox(width: 8),
-    Expanded(
-      child: ElevatedButton.icon(
-        onPressed: () {
-          filmProvider.addAregarderPlustard(widget.film);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Ajouté à "À regarder plus tard"!')),
-          );
-        },
-        icon: Icon(Icons.watch_later, size: 20),
-        label: Text('À regarder plus tard', style: TextStyle(fontSize: 14)),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.orange,
-          foregroundColor: Colors.white,
-        ),
-      ),
-    ),
-  ],
-)
+                          SizedBox(height: 10),
 
-                  ],
-                ),
+                
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ReviewsScreen(filmId: widget.film.id),
+                                ),
+                              );
+                            },
+                            icon: Icon(Icons.rate_review),
+                            label: Text('Voir Critiques'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blueAccent,
+                              foregroundColor: Colors.white,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  SizedBox(height: 30),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            filmProvider.addAfavoris(widget.film);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Ajouté aux favoris!')),
+                            );
+                          },
+                          icon: Icon(Icons.favorite, size: 20),
+                          label: Text('Favoris', style: TextStyle(fontSize: 14)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.pink,
+                            foregroundColor: Colors.white,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            filmProvider.addAregarderPlustard(widget.film);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Ajouté à "À regarder plus tard"!')),
+                            );
+                          },
+                          icon: Icon(Icons.watch_later, size: 20),
+                          label: Text('À regarder plus tard', style: TextStyle(fontSize: 14)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                            foregroundColor: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-    );
-  }
+          ),
+  );
+}
 
   Widget _buildCastSection(FilmProvider filmProvider) {
     final cast = filmProvider.selectedFilmCast;
@@ -295,8 +292,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
               return Column(
                 children: [
                   Container(
-                    width: 100, // Largeur souhaitée pour l'image
-                    height: 150, // Hauteur souhaitée pour l'image
+                    width: 100,
+                    height: 150, 
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                       image: DecorationImage(

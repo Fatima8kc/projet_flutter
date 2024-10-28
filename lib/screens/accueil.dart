@@ -5,7 +5,7 @@ import '../screens/recherche.dart';
 import '../screens/favorit.dart';
 import '../screens/aregarderplt.dart';
 import '../screens/detail_film.dart';
-import '../screens/telechargement.dart'; // Ajoute l'écran des téléchargements
+import '../screens/telechargement.dart'; 
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -23,6 +23,8 @@ class _HomeScreenState extends State<HomeScreen> {
     
     // Charger les films téléchargés au démarrage
     Provider.of<FilmProvider>(context, listen: false).chargerFilmsTelecharge();
+    
+    Provider.of<FilmProvider>(context, listen: false).initFavoritesAndWatchLater();
   }
 
   @override

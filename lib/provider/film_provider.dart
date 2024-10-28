@@ -16,7 +16,7 @@ class FilmProvider with ChangeNotifier {
   List<Film> _watchLater = [];
   List<Commentaire> _commentaires = [];
   Film? _filmSelectionne;
-  List<BandeAnnonce> _selectedFilmTrailers = []; // Liste pour les trailers
+  List<BandeAnnonce> _selectedFilmTrailers = [];
   List<Film> _filmTelecharge = [];
 
 
@@ -28,7 +28,6 @@ class FilmProvider with ChangeNotifier {
   List<BandeAnnonce> get selectedFilmTrailers => _selectedFilmTrailers;
   List<Acteur> get selectedFilmCast => _filmSelectionne?.acteurs ?? [];
   List<Realisateur> get selectedFilmDirectors => _filmSelectionne?.realisateurs ?? [];
-  // Accéder aux films téléchargés
   List<Film> get downloadedFilms => _filmTelecharge;
 
 
@@ -101,11 +100,11 @@ class FilmProvider with ChangeNotifier {
 
 Future<void> fetchFilmDetails(int movieId) async {
   try {
-    // Démarre le chargement
+    
     _isLoading = true;
-    notifyListeners(); // Met à jour l'interface utilisateur pour indiquer le début du chargement
+    notifyListeners(); 
 
-    // Requête pour récupérer les détails du film
+    
     final response = await http.get(
       Uri.parse('https://api.themoviedb.org/3/movie/$movieId?api_key=$_apiKey&append_to_response=credits,videos&language=fr-FR'),
     );
@@ -113,15 +112,14 @@ Future<void> fetchFilmDetails(int movieId) async {
     if (response.statusCode == 200) {
       final filmJson = jsonDecode(response.body);
 
-      // Vérifie si les données sont disponibles
+      
       if (filmJson == null) {
         throw Exception('Film data is null');
       }
 
-      // Instancie le film sélectionné
+    
       _filmSelectionne = Film.aPartirDeJson(filmJson);
 
-      // Récupère les bandes-annonces
       final trailersResponse = await http.get(
         Uri.parse('https://api.themoviedb.org/3/movie/$movieId/videos?api_key=$_apiKey&language=fr-FR'),
       );
@@ -131,10 +129,8 @@ Future<void> fetchFilmDetails(int movieId) async {
       } else {
         _selectedFilmTrailers = [];
       }
-
-      // Récupère les crédits (acteurs et réalisateurs)
       final creditsJson = filmJson['credits'] ?? {};
-      print('Credits JSON: ${jsonEncode(creditsJson)}'); // Imprime les crédits pour vérification
+      print('Credits JSON: ${jsonEncode(creditsJson)}'); 
 
       final castJson = creditsJson['cast'] as List? ?? [];
       final crewJson = creditsJson['crew'] as List? ?? [];
@@ -149,8 +145,6 @@ Future<void> fetchFilmDetails(int movieId) async {
 
       print('Nombre d\'acteurs: ${_filmSelectionne!.acteurs?.length}');
       print('Nombre de réalisateurs: ${_filmSelectionne!.realisateurs?.length}');
-
-      // Fin du chargement et mise à jour de l'interface utilisateur
       _isLoading = false;
       notifyListeners();
     } else {
@@ -158,7 +152,7 @@ Future<void> fetchFilmDetails(int movieId) async {
     }
   } catch (error) {
     print("Erreur lors de la récupération des détails du film: $error");
-    _isLoading = false; // Assurez-vous de changer l'état même en cas d'erreur
+    _isLoading = false; 
     notifyListeners();
   }
 }

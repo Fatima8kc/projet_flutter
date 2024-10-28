@@ -4,7 +4,7 @@ import '../models/commentaires.dart';
 import '../provider/commentaire_provider.dart';
 
 class ReviewsScreen extends StatelessWidget {
-  final int filmId; // Identifiant du film pour lequel on souhaite afficher les critiques
+  final int filmId; 
 
   ReviewsScreen({required this.filmId});
 
@@ -21,7 +21,7 @@ class ReviewsScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          // Formulaire pour ajouter une nouvelle critique
+      
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -43,12 +43,12 @@ class ReviewsScreen extends StatelessWidget {
                   onPressed: () {
                     if (authorController.text.isNotEmpty && contentController.text.isNotEmpty) {
                       final review = Commentaire(
-                        author: authorController.text,
-                        content: contentController.text,
+                        auteur: authorController.text,
+                        contenu: contentController.text,
                       );
                       reviewProvider.addReview(filmId, review);
 
-                      // Efface les champs après soumission
+                      
                       authorController.clear();
                       contentController.clear();
                     }
@@ -59,7 +59,7 @@ class ReviewsScreen extends StatelessWidget {
             ),
           ),
 
-          // Afficher la liste des critiques
+         
           Expanded(
             child: Consumer<ReviewProvider>(
               builder: (context, provider, child) {
@@ -74,8 +74,8 @@ class ReviewsScreen extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final review = reviews[index];
                     return ListTile(
-                      title: Text(review.author),
-                      subtitle: Text(review.content),
+                      title: Text(review.auteur),
+                      subtitle: Text(review.contenu),
                     );
                   },
                 );

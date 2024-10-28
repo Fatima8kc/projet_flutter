@@ -12,8 +12,7 @@ class _TelechargementsPageState extends State<TelechargementsPage> {
   @override
   void initState() {
     super.initState();
-    
-    // Appel de la méthode pour charger les films téléchargés au début
+   
     Future.microtask(() {
       Provider.of<FilmProvider>(context, listen: false).chargerFilmsTelecharge();
     });
